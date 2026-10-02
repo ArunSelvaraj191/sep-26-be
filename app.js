@@ -1,12 +1,14 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors") 
-// const mongoose = require("mongoose")
+const mongoose = require("mongoose")
 
 const authRoute = require("./routes/authRoutes")
 const paymentsRoute = require("./routes/paymentsRoutes")
 const transactionRoute = require("./routes/transactionsRoutes");
-const { default: mongoose, mongo } = require("mongoose");
+const userRoute = require("./routes/userRoutes");
+// const { default: mongoose, mongo } = require("mongoose");
+const dns = require("node:dns/promises")
 
 const app = express();
 app.use(express.json()) // will get json format from FE
@@ -36,11 +38,13 @@ app.get("/",(req,res)=>{
 // app.use("/transactions",transactionRoute)
 
 app.use("/auth",authRoute);
+app.use("/users",userRoute);
+dns.setServers(["1.1.1.1", "1.0.0.1"]);
 
 console.log("MONGODB_URI=>",MONGODB_URI)
 mongoose.connect(MONGODB_URI)
    .then(() => console.log('Mongo connected'))
-   .catch(err => console.error(err));
+   .catch(err => console.error("err:::",err));
    
 app.listen(PORT,()=>{
     console.log(`Server is running on ${PORT}`)
